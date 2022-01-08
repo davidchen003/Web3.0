@@ -1,12 +1,13 @@
 [course video](https://www.youtube.com/watch?v=Wn_Kb3MR_cU)
 [code](https://github.com/adrianhajdin/project_web3.0/tree/main/smart_contract)
 
+- use [Vite](https://vitejs.dev/guide/), instead of `create-react-app` to initialize our app using **react** framework
+- use [TailWind](https://tailwindcss.com/docs/guides/create-react-app) for CSS
+- use **hardhat** for smart contract
+
 ![image](./client/images/Capture.JPG)
 
 # Setup
-
-- use [Vite](https://vitejs.dev/guide/), instead of `create-react-app` to initialize our app using **react** framework
-- use [TailWind](https://tailwindcss.com/docs/guides/create-react-app) for CSS
 
 - create `client` folder
 
@@ -126,3 +127,18 @@
   - `npm i @tailwindcss/forms'
 
 **Commit 6**
+
+# Smart Contract
+
+## Setup
+
+- install VS Code `solidty` extension
+
+- create `smart_contract` folder
+- `npm install --save-dev hardhat @nomiclabs/hardhat-waffle ethereum-waffle chai @nomiclabs/hardhat-ethers ethers`
+
+- `npx hardhat` -> choose `Create a basic sample project`
+
+- `npx hardhat test` (which runs the test script, deploying/testing a basic greeter solidity contract)
+
+**Commit 7**
