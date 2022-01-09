@@ -225,3 +225,12 @@
   - if we replace `value={{...}}` with `value={{ value: "test of context" }}` in `TransactionContext.js`, we'll see it in the browser console
 
 **Commit 9**
+
+- get MetaMask account
+
+  - `const checkIfWalletIsConnect = async () => {`
+  - `const accounts = await ethereum.request({ method: "eth_accounts" });`
+
+- log into MetaMast, refresh webpage, and we'll see the the account in browser's console.
+
+**Commit 10**
