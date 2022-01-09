@@ -231,6 +231,33 @@
   - `const checkIfWalletIsConnect = async () => {`
   - `const accounts = await ethereum.request({ method: "eth_accounts" });`
 
-- log into MetaMast, refresh webpage, and we'll see the the account in browser's console.
+- log into MetaMast, refresh webpage, and we'll see the the account in browser's console (because I connected MetaMask with localhost:3000 in previous project)
 
 **Commit 10**
+
+- `const connectWallet = async () => {`
+- pass it to other components
+
+  ```
+    return (
+    <TransactionContext.Provider value={{ connectWallet }}>
+      {children}
+    </TransactionContext.Provider>
+  )
+  ```
+
+  here `{ connectWallet }` is shorthand for `{ connectWallet:connectWallet}`
+
+- `Welcome.js`
+
+  - change `const { value } = useContext(TransactionContext);` to `const { connectWallet } = useContext(TransactionContext);`
+  - now we can take out the dummy `const connectWallet = () => {};` and the `Connect Wallet` should function now.
+
+- verify:
+  - remove connected `localhost:3000` from MetaMask accounts
+  - refresh our Webpage and we'll see an empty array in browser console (from line 34 in `TransactionContext.js`) )
+  - click `Connect Wallet`, MetaMask pops up for us to select one or more accounts to connect
+  - select one account and connect
+  - refresh our webpage we'll see our MetaMask account show up in browser console (from line 34 in `TransactionContext.js`)
+
+**Commit 11**
