@@ -142,3 +142,23 @@
 - `npx hardhat test` (which runs the test script, deploying/testing a basic greeter solidity contract)
 
 **Commit 7**
+
+## Smart Contract
+
+- delete `Greeter.sol` and create `Transactions.sol`
+- delete `sample-scripts.js` and create `deploy.js`
+- copy/paste `hardhat.config.js`, replace with my own Alchemy ropsten testnet http address and MetaMask acc1 private key.
+
+## Deployment
+
+- `npx hardhat run scripts/deploy.js --network ropsten`
+
+  ```
+  Compiling 2 files with 0.8.0
+  Compilation finished successfully
+  Transactions address:  0x1bB08ffd1EF88E78A1dbEA0CAcc2d1EB3aDDF713
+  ```
+
+  using above address you'll find the contract in [ropsten](https://ropsten.etherscan.io/)
+
+**Commit 8**
