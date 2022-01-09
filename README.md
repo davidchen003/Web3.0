@@ -1,9 +1,10 @@
-[course video](https://www.youtube.com/watch?v=Wn_Kb3MR_cU)
-[code](https://github.com/adrianhajdin/project_web3.0/tree/main/smart_contract)
+- [course video](https://www.youtube.com/watch?v=Wn_Kb3MR_cU)
+- [code](https://github.com/adrianhajdin/project_web3.0/tree/main/smart_contract)
 
 - use [Vite](https://vitejs.dev/guide/), instead of `create-react-app` to initialize our app using **react** framework
 - use [TailWind](https://tailwindcss.com/docs/guides/create-react-app) for CSS
 - use **hardhat** for smart contract
+- use react **Context** API to manage the interaction with the blockchain, instead of writing the logic all across the components.
 
 ![image](./client/images/Capture.JPG)
 
@@ -162,3 +163,65 @@
   using above address you'll find the contract in [ropsten](https://ropsten.etherscan.io/)
 
 **Commit 8**
+
+# Integration - react and blockchain
+
+## Setup
+
+- in `cient/src`
+  - create `utils/constants.js`, enter the contract address found above there
+  - copy file `smart_contract/artifacts/contracts/Transactions.sol/Transaction.json` in `util` folder, and import **abi** in `constants.js`
+- now we have all the info we need inside react to interact with our smart contract
+
+- in `client`, `npm run dev`
+
+## Context API
+
+- use react contexts API around our entire app, which allows us not to write the logic all across our components.
+- create `context` folder in `src`, and file `TransactionContext.jsx` as a centralized place for all the logic interacting with the blockchain
+
+- `TransactionContext.jsx`
+
+  - `export const TransactionContext = React.createContext()`
+  - and
+
+  ```
+  export const TransactionsProvider = ({ children }) => {
+    ...
+    return (
+        <TransactionContext.Provider value={{...}}>
+            {children}
+        </TransactionContext.Provider>
+    )};
+  ```
+
+  - so the component wrapped by `TransactionsProvider` will have access to value object `value={{...}}`
+
+- `main.jsx`
+
+  ```
+  import { TransactionsProvider } from "./context/TransactionContext";
+
+  ReactDOM.render(
+    <TransactionsProvider>
+      <App />
+    </TransactionsProvider>,
+    document.getElementById("root")
+  );
+  ```
+
+- `Welcome.jsx`
+
+  let's see how we'll get above testing value in `Welcome.jsx` component
+
+  ```
+  import React, { useContext } from "react";
+  import { TransactionContext } from "../context/TransactionContext";
+  ...
+  const { value } = useContext(TransactionContext);
+  console.log(value);
+  ```
+
+  - if we replace `value={{...}}` with `value={{ value: "test of context" }}` in `TransactionContext.js`, we'll see it in the browser console
+
+**Commit 9**
