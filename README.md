@@ -60,7 +60,7 @@
 
 ## Start the server
 
-- `npm run dev`
+- `npm run dev` (in `client` folder)
 
 ## Smart_contract
 
@@ -226,14 +226,18 @@
 
 **Commit 9**
 
+## Getting MetaMask account
+
 - get MetaMask account
 
   - `const checkIfWalletIsConnect = async () => {`
   - `const accounts = await ethereum.request({ method: "eth_accounts" });`
 
-- log into MetaMast, refresh webpage, and we'll see the the account in browser's console (because I connected MetaMask with localhost:3000 in previous project)
+- log into MetaMast, refresh webpage, and we'll see the the account in browser's console (because I connected MetaMask with localhost:3000 in previous project). Otherwise, this would be an empty array (getting no acounts, since none are connected yet)
 
 **Commit 10**
+
+## Connecting to MetaMask account
 
 - `const connectWallet = async () => {`
 - pass it to other components
@@ -262,6 +266,8 @@
 
 **Commit 11**
 
+## Conditinoal rendering ("Connect Wallnet" button won't show if there is connected account)
+
 - setCurrentAccount and pass it `<TransactionContext.Provider value={{ connectWallet, currentAccount }}>`
 - use it in `Welcome.jsx`
   - `const { connectWallet, currentAccount } = useContext(TransactionContext);`
@@ -269,3 +275,62 @@
 - so when the webpage first load, useEffect and `checkIfWalletIsConnect` runs. If there is no `currentAccount` set, Connect Wallet button will show. Otherwise, it will not show.
 
 **Commit 12**
+
+## Sending (logging) transaction
+
+- set the state and `handleChange` function in `TransactionContext.jsx`
+
+  ```
+    const [formData, setformData] = useState({ addressTo: "", amount: "", keyword: "", message: "" });
+
+    const handleChange = (e, name) => {
+    setformData((prevState) => ({ ...prevState, [name]: e.target.value }));
+  };
+  ```
+
+- pass them to our context object
+  ```
+    return (
+    <TransactionContext.Provider value={{
+      connectWallet, currentAccount,
+      formData, setformData, handleChange
+    }}>
+      {children}
+    </TransactionContext.Provider>
+    );};
+  ```
+- getting/using above state and function in `Welcome.jsx`
+  ```
+    const { connectWallet, currentAccount, formData, setformData, handleChange } =
+    useContext(TransactionContext);
+    ...
+    <Input placeholder="Address To" name="addressTo" type="text" handleChange={handleChange}/>
+    ...
+  ```
+- handle form submit
+
+  - add `onClick={handleSubmit}` to submit button, and
+  - define `handleSubmit` function
+
+  ```
+    const handleSubmit = (e) => {
+    const { addressTo, amount, keyword, message } = formData; // destructure formData
+    e.preventDefault();
+    if (!addressTo || !amount || !keyword || !message) return; // must have data for all the fields
+    sendTransaction();
+    };
+  ```
+
+  - pass `sendTransaction()` from TransactionContext.jsx to Welcome.jsx
+
+  - define `sendTransaction` in TransactionContext.jsx
+    ```
+      const { addressTo, amount, keyword, message } = formData;
+      getEthereumContract()
+    ```
+    - at this moment, it only does
+      `console.log({provider,signer,transactionContract,});`
+
+- enter some fake data (make sure enter number in `Amount(Eth)` field, otherwise it won't pass the data validation), click `Send now`, you'll see the very detailed info of `provider,signer,transactionContract` in browser console (from console.log at line 19 in TransactionContext.jsx)
+
+**Commit 13**
