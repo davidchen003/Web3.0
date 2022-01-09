@@ -261,3 +261,11 @@
   - refresh our webpage we'll see our MetaMask account show up in browser console (from line 34 in `TransactionContext.js`)
 
 **Commit 11**
+
+- setCurrentAccount and pass it `<TransactionContext.Provider value={{ connectWallet, currentAccount }}>`
+- use it in `Welcome.jsx`
+  - `const { connectWallet, currentAccount } = useContext(TransactionContext);`
+  - change `Connect Wallet` from alwayse shown to conditional rendering `{!currentAccount && (<button ...`
+- so when the webpage first load, useEffect and `checkIfWalletIsConnect` runs. If there is no `currentAccount` set, Connect Wallet button will show. Otherwise, it will not show.
+
+**Commit 12**
