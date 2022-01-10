@@ -21,12 +21,52 @@ const getEthereumContract = () => {
 
 export const TransactionsProvider = ({ children }) => {
   const [currentAccount, setCurrentAccount] = useState("");
-  const [formData, setformData] = useState({ addressTo: "", amount: "", keyword: "", message: "" });
+  const [formData, setformData] = useState({
+    addressTo: "",
+    amount: "",
+    keyword: "",
+    message: "",
+  });
   const [isLoading, setIsLoading] = useState(false);
-  const [transactionCount, setTransactionCount] = useState(localStorage.getItem("transactionCount"));
+  const [transactionCount, setTransactionCount] = useState(
+    localStorage.getItem("transactionCount")
+  );
 
   const handleChange = (e, name) => {
     setformData((prevState) => ({ ...prevState, [name]: e.target.value }));
+  };
+
+  const getAllTransactions = async () => {
+    try {
+      if (ethereum) {
+        const transactionsContract = getEthereumContract();
+
+        const availableTransactions =
+          await transactionsContract.getAllTransactions();
+
+        console.log(availableTransactions);
+      } else {
+        console.log("Please install MetaMask.");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const checkIfTransactionsExists = async () => {
+    try {
+      if (ethereum) {
+        const transactionsContract = getEthereumContract();
+        const transactionsCount =
+          await transactionsContract.getTransactionCount();
+
+        window.localStorage.setItem("transactionCount", transactionsCount);
+      }
+    } catch (error) {
+      console.log(error);
+
+      throw new Error("No ethereum object");
+    }
   };
 
   const checkIfWalletIsConnect = async () => {
@@ -39,6 +79,7 @@ export const TransactionsProvider = ({ children }) => {
 
       if (accounts.length) {
         setCurrentAccount(accounts[0]);
+        getAllTransactions();
 
         //getAllTransactions();
       } else {
@@ -53,6 +94,7 @@ export const TransactionsProvider = ({ children }) => {
 
   useEffect(() => {
     checkIfWalletIsConnect();
+    checkIfTransactionsExists();
   }, []);
 
   const connectWallet = async () => {
@@ -83,15 +125,22 @@ export const TransactionsProvider = ({ children }) => {
       // send money from one address to another
       await ethereum.request({
         method: "eth_sendTransaction",
-        params: [{
-          from: currentAccount,
-          to: addressTo,
-          gas: "0x5208", //=21000 Gwei, https://www.rapidtables.com/convert/number/hex-to-decimal.html
-          value: parsedAmount._hex,
-        }],
+        params: [
+          {
+            from: currentAccount,
+            to: addressTo,
+            gas: "0x5208", //=21000 Gwei, https://www.rapidtables.com/convert/number/hex-to-decimal.html
+            value: parsedAmount._hex,
+          },
+        ],
       });
 
-      const transactionHash = await transactionsContract.addToBlockchain(addressTo, parsedAmount, message, keyword);
+      const transactionHash = await transactionsContract.addToBlockchain(
+        addressTo,
+        parsedAmount,
+        message,
+        keyword
+      );
 
       setIsLoading(true);
       console.log(`Loading - ${transactionHash.hash}`);
@@ -99,23 +148,27 @@ export const TransactionsProvider = ({ children }) => {
       console.log(`Success - ${transactionHash.hash}`);
       setIsLoading(false);
 
-      const transactionsCount = await transactionsContract.getTransactionCount();
+      const transactionsCount =
+        await transactionsContract.getTransactionCount();
 
       setTransactionCount(transactionsCount.toNumber());
-
     } catch (error) {
       console.log(error);
       throw new Error("No ethereum object");
     }
-
-  }
-
+  };
 
   return (
-    <TransactionContext.Provider value={{
-      connectWallet, currentAccount,
-      formData, setformData, handleChange, sendTransaction
-    }}>
+    <TransactionContext.Provider
+      value={{
+        connectWallet,
+        currentAccount,
+        formData,
+        setformData,
+        handleChange,
+        sendTransaction,
+      }}
+    >
       {children}
     </TransactionContext.Provider>
   );

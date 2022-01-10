@@ -450,3 +450,19 @@
   - `const PRIVATE_KEY = import.meta.env.PRIVATE_KEY;`
 
 **Commit 16**
+
+## Footer.jsx
+
+## Getting transaction data from blockchain
+
+- create `checkIfTransactionsExists()` in `TransactionContext.jsx`
+- and put it in useEffect()
+  ```
+    useEffect(() => {
+    checkIfWalletIsConnect();
+    checkIfTransactionsExists();
+    }, []);
+  ```
+- create `getAllTransactions()` and call it in `checkIfWalletIsConnect()`
+
+**Commit 17**
