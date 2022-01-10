@@ -392,3 +392,61 @@
 - details of both transactions can be seen on https://ropsten.etherscan.io/ by clicking the activity status in MetaMask; for the 2nd transaction we can see the "keyword test" and "message test" in the input data field of the transaction record
 
 **Commit 14**
+
+# Rest of the frontend development (React, Tailwind)
+
+## Services.jsx
+
+**Commit 15**
+
+## Transactions.jsx
+
+- in `Welcome`, change "address" to `{currentAccount}`, so the pink ethereum card shows our current address (if connected)
+- as you can see it's too long (sticking out of the card), so
+- `client/src/utils/shortenAddress.js`
+  - `export const shortenAddress = (address) => `${address.slice(0, 5)}...${address.slice(address.length - 4)}`;`
+- then import/use this in `Welcome.jsx`
+
+  - `{shortenAddress(currentAccount)}`
+
+- we'll use this util in `Transactions.jsx` also
+
+- if account connected, show latest transactions, if not, "connect your account to see the latest transactions"
+
+- copy/paste `client/src/utils/dummyData.js`
+- display the transactions:
+  ```
+    <div className="flex flex-wrap justify-center items-center mt-10">
+    {dummyData.reverse().map((transaction, i) => (
+      <TransactionsCard key={i} {...transaction} />
+    ))}
+    </div>
+  ```
+- create `TransactionsCard`
+
+- [GIPHY](https://developers.giphy.com/)
+
+  - create account
+  - create app (https://developers.giphy.com/docs/sdk)
+  - select API (instead of SDK)
+  - app name: web3.0
+  - got API key (stored in .env)
+
+- create `src/hooks/useFetch.jsx`
+- import/use it in `Transactions.jsx`
+  - `import useFetch from "../hooks/useFetch";`
+  - `const gifUrl = useFetch({ keyword });`
+  - ```
+          <img
+          src={gifUrl || url}
+          alt="nature"
+          className="w-full h-64 2xl:h-96 rounded-md shadow-lg object-cover"
+        />
+    ```
+
+## store private key to .env file
+
+- import/use it in `hardhat.config.js`
+  - `const PRIVATE_KEY = import.meta.env.PRIVATE_KEY;`
+
+**Commit 16**
