@@ -334,3 +334,61 @@
 - enter some fake data (make sure enter number in `Amount(Eth)` field, otherwise it won't pass the data validation), click `Send now`, you'll see the very detailed info of `provider,signer,transactionContract` in browser console (from console.log at line 19 in TransactionContext.jsx)
 
 **Commit 13**
+
+## Sending money (to another address)
+
+- in `getEthereumContract`, instead of logging contract info, we'll return the contract:
+
+  - `return transactionsContract;`
+
+- in `sendTransaction`, instead of just calling `getEthereumContract()`, we'll use it by assigning: `const transactionsContract = getEthereumContract();`
+
+- now we can use the variable `transactionsContract` to call all contract related functions
+
+- convert amount and send money from one address to another
+
+  ```
+      const parsedAmount = ethers.utils.parseEther(amount);
+
+      await ethereum.request({
+        method: "eth_sendTransaction",
+        params: [{
+          from: currentAccount,
+          to: addressTo,
+          gas: "0x5208", //=21000 Gwei, https://www.rapidtables.com/convert/number/hex-to-decimal.html
+          value: parsedAmount._hex,
+        }],
+  ```
+
+## Store info to blockchain (from our address to the contract)
+
+- to store the info to the blockchain
+
+  - `const transactionHash = await transactionsContract.addToBlockchain(addressTo, parsedAmount, message, keyword);`
+  - this will take time, so add isLoading state
+
+- `const transactionsCount = await transactionsContract.getTransactionCount();`
+- add transactionCount state, `const [transactionCount, setTransactionCount] = useState(localStorage.getItem("transactionCount"));`
+- using **local storage** above. if we instead set it's initial value to zero, the count will turn into zero everytime we reload our browswer. (no `localStorage.setItem()` yet.)
+
+- now we can test
+
+  - copy 2nd MetaMask account and paste into webpage
+  - enter 0.0005 (ETH)
+  - keyword test
+  - message test
+  - click send now
+  - MetaMask pops up for sending money confirmation
+  - MetaMask pops up again for "contract interaction" (storing above transaction info)
+  - in browswer console
+
+  ```
+  Loading - 0x07bba312b6c995b09de9a865a9590152669daea8b89b23a876fd7a4d606bb96d
+  Success - 0x07bba312b6c995b09de9a865a9590152669daea8b89b23a876fd7a4d606bb96d
+  ```
+
+  - in MetaMask, account 1 we have one send money (0.0005 ETH) activity and one contract interaction activity (above transaction id can also be found there); account 2 has one receive money (0.0005 ETH) activity.
+
+- details of both transactions can be seen on https://ropsten.etherscan.io/ by clicking the activity status in MetaMask; for the 2nd transaction we can see the "keyword test" and "message test" in the input data field of the transaction record
+
+**Commit 14**
