@@ -466,3 +466,46 @@
 - create `getAllTransactions()` and call it in `checkIfWalletIsConnect()`
 
 **Commit 17**
+
+- in `TransactionContext.jsx`
+
+  - add `const structuredTransactions = availableTransactions.map(`
+  - `const [transactions, setTransactions] = useState([]);`
+  - pass `transactions` and `isLoading` in ` <TransactionContext.Provider value={{}}`
+
+- in `Transaction.jsx`
+
+  - change `const { currentAccount } = useContext(TransactionContext);` to `const { currentAccount, transactions } = useContext(TransactionContext);`
+  - change `{dummyData.reverse().map((transaction, i) => (` to `{transactions.reverse().map((transaction, i) => (`
+
+- in `Welcome.jsx`
+
+  - get `isLoading` from `useContext(TransactionContext);`
+  - change `{false ? ` to `isLoading ? `
+
+- test
+
+  - reload page, we'll see one transaction we entered in the past
+  - enter one more transaction (use MetaMask acc2)
+  - reload page after the transaction went through, success
+  - only problem is `const APIKEY = import.meta.env.VITE_GIFHY_API;` is not working (won't retrieve the key, although same method worked in `hardhat.config.js`)
+  - the browswer issue panel also reported issues:
+
+    Because a cookie’s SameSite attribute was not set or is invalid, it defaults to SameSite=Lax, which prevents the cookie from being sent in a cross-site request. This behavior protects user data from accidentally leaking to third parties and cross-site request forgery.
+    Resolve this issue by updating the attributes of the cookie:
+    Specify `SameSite=None` and `Secure` if the cookie should be sent in cross-site requests. This enables third-party use.
+    Specify `SameSite=Strict` or `SameSite=Lax` if the cookie should not be sent in cross-site requests.
+
+    seems this affects the gifhy request, but shouldn't be the cause for getting APIKEY
+
+- add `location.reload();` in `TransactionContext.jsx`, so once the transaction went through, it will reload showing the newly entered transaction
+
+**Commit 18**
+
+## deploy to [hostinger](https://www.hostinger.com/) (3:08:00)
+
+- stop server. in `client` folder run `npm run build`
+- a `dist` folder will be created under `client`
+- drap and drop `assets` folder and `index.html` file in this folder into `public.html` folder in your hostinger account.
+
+- enable/install SSL certificate (inside hostinger). once this is done, you'll see a lock icon to the left of url bar.
